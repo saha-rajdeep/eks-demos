@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+        image: k8s.gcr.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 500m
+          limits:
+            cpu: 1000m
+          
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-apache
+  labels:
+    run: php-apache
+spec:
+  ports:
+  - port: 80
+  selector:
+    run: php-apache
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50

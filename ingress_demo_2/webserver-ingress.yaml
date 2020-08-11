@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "webserver-ingress"
+  namespace: "2048-game"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: webserver-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: "service-frontend"
+              servicePort: 80
+          - path: /frontend
+            backend:
+              serviceName: "service-frontend"
+              servicePort: 80    
+                

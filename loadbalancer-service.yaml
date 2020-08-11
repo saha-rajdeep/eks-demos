@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service
+  labels:
+    app: lb-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  minReadySeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: nginx
