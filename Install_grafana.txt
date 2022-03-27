@@ -1,16 +1,23 @@
-1. Install Grafana
+1. Copy paste the following in a YAML file, name it grafana.yaml
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.prometheus.svc.cluster.local
+      access: proxy
+      isDefault: true
+
+2. Install Grafana
 kubectl create namespace grafana
-helm install grafana stable/grafana \
+
+helm install grafana grafana/grafana \
     --namespace grafana \
     --set persistence.storageClassName="gp2" \
     --set persistence.enabled=true \
     --set adminPassword='EKS!sAWSome' \
-    --set datasources."datasources\.yaml".apiVersion=1 \
-    --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
-    --set datasources."datasources\.yaml".datasources[0].type=prometheus \
-    --set datasources."datasources\.yaml".datasources[0].url=http://prometheus-server.prometheus.svc.cluster.local \
-    --set datasources."datasources\.yaml".datasources[0].access=proxy \
-    --set datasources."datasources\.yaml".datasources[0].isDefault=true \
+    --values grafana.yaml \
     --set service.type=LoadBalancer
 
 2. Check if Grafana is deployed properly
