@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    environment: test
+  name: test
+  namespace: frontendapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environment: test
+  template:
+    metadata:
+      labels:
+        environment: test
+    spec:
+      containers:
+      - image: nginx:1.16
+        name: nginx
+
+---
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: test
+  namespace: frontendapp
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: test
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+        resource:
+          name: cpu
+          targetAverageUtilization: 80
