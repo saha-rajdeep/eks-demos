@@ -23,15 +23,16 @@ During this lab, we'll be implementing a robust observability solution for our c
     
 3. Go to EKS Console and in Add ons add AWS Distro for Open Telemetry add on:
 
-![image](https://user-images.githubusercontent.com/79714302/230539725-415d7fe3-ba58-4088-b87b-7e8c23291b9b.png)
+![image](https://user-images.githubusercontent.com/79714302/230729016-473456ca-cfc4-436e-8b9f-e720c2694454.png)
 
 
-4. Do kubectl get pods -A to check of the ADOT operator is up and running or not.
+4. Do `kubectl get pods -A` to check if the ADOT operator pod is up and running or not.
 5. Create Amazon Managed Prometheus and Amazon Managed Grafana workspaces(preferably in the same region where cluster is running)
 6. Setup a Service Account
     a. Follow the below steps to setup your Service Account
     
-    ![image](https://user-images.githubusercontent.com/79714302/230539887-79a90865-a928-4c57-884f-00246725e9af.png)
+    ![image](https://user-images.githubusercontent.com/79714302/230728938-ae6f153b-2236-4437-9cc8-fa28f15fcaf7.png)
+
     
     b. Copy the Resource arn from the Summary page of your AMP workspace and create this policy in AWS CLI
     
@@ -75,11 +76,11 @@ During this lab, we'll be implementing a robust observability solution for our c
     ```
     
 2. In `collector-config-amp.yaml`, replace the following with your own values:
-    - `mode: *deployment*`
-    - `serviceAccount: *adot-collector` (replace this with the name of the service Account we created)*
-    - `endpoint: "*<YOUR_REMOTE_WRITE_ENDPOINT>*"`
-    - `region: "*<YOUR_AWS_REGION>*"`
-    - `name: *adot-collector*`
+    - *`mode: deployment`*
+    - *`serviceAccount: adot-collector`*(replace this with the name of the service Account we created)
+    - *`endpoint: "<YOUR_REMOTE_WRITE_ENDPOINT>"`*
+    - *`region: "<YOUR_AWS_REGION>"`*
+    - *`name: adot-collector`* (replace with `amp-collector`)
 3. Apply the yaml file with this command
     
     ```html
@@ -209,7 +210,7 @@ kubectl get pods -A
     ```
     
 
-### Finally go to AWS X-Ray and click on the traces tab
+### Finally go to AWS X-Ray console and click on the traces tab
 
 ![image](https://user-images.githubusercontent.com/79714302/230540837-136a7d6a-905b-43eb-aebc-aefff32586f0.png)
 
