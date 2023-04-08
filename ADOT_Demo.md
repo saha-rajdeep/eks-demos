@@ -1,6 +1,6 @@
 # Lab Overview And High Level Design
 
-   ## Pre-requisites
+   ## Pre-requisites:
 
 1. Create cluster using command
     
