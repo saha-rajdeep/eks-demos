@@ -1,6 +1,8 @@
-# Lab Overview And High Level Design
+# Lab Overview 
 
-   ## Pre-requisites:
+During this lab, we'll be implementing a robust observability solution for our cluster running on Amazon Elastic Kubernetes Service (EKS) using the AWS Distro for OpenTelemetry (ADOT) operator. With the ADOT collector, we'll export our metrics to AWS Managed Prometheus, allowing us to easily analyze and visualize our data in AWS Managed Grafana. In addition, we'll configure our ADOT collector to export traces to AWS X-Ray, enabling us to gain insights into the performance and behavior of our system.
+
+   ## Pre-requisites
 
 1. Create cluster using command
     
