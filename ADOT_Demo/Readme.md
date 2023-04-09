@@ -7,7 +7,7 @@ During this lab, we'll be implementing a robust observability solution for our c
 1. Create cluster using command
     
     ```html
-    eksctl create cluster --name adotv2 --node-type m5.large --nodes 3 --region us-east-1
+    eksctl create cluster --name <cluster-name> --node-type <node-type> --nodes <node-count> --region <region-name>
     ```
     
 2. Install kubectl CertManager
@@ -57,8 +57,8 @@ During this lab, we'll be implementing a robust observability solution for our c
     c. Replace *`my-service-account`* with the name of the Kubernetes service account that you want `eksctl` to create and associate with an IAM role. Replace *`default`* with the namespace that you want `eksctl` to create the service account in. Replace *`my-cluster`* with the name of your cluster. Replace *`my-role`* with the name of the role that you want to associate the service account to. If it doesn't already exist, `eksctl` creates it for you. Replace *`111122223333`* with your account ID , *`my-policy`* with the name of an existing policy and replace *`my-region`* with the region of your EKS clsuter.
     
     ```html
-    eksctl create iamserviceaccount --name my-service-account --namespace default --cluster my-cluster --region my-region --role-name "my-role" \
-        --attach-policy-arn arn:aws:iam::111122223333:policy/my-policy --approve
+    eksctl create iamserviceaccount --name <my-service-account> --namespace <default> --cluster <my-cluster> --region <my-region> --role-name <"my-role"> \
+        --attach-policy-arn <arn:aws:iam::111122223333:policy/my-policy> --approve
     ```
     
     d. Run this command to see if you setup your Service Account properly or not.Replace `<my-service-account>` with the name of your Service account and mention the namespace in which that service account was created in place of `<default>`
