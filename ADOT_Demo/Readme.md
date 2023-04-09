@@ -29,12 +29,13 @@ During this lab, we'll be implementing a robust observability solution for our c
 4. Do `kubectl get pods -A` to check if the ADOT operator pod is up and running or not.
 5. Create Amazon Managed Prometheus and Amazon Managed Grafana workspaces(preferably in the same region where cluster is running)
 6. Setup a Service Account
-    a. Follow the below steps to setup your Service Account
+
+    a. Follow the below steps to setup IAM OIDC provider for your cluster
     
     ![image](https://user-images.githubusercontent.com/79714302/230728938-ae6f153b-2236-4437-9cc8-fa28f15fcaf7.png)
 
     
-    b. Copy the Resource arn from the Summary page of your AMP workspace and create this policy in AWS CLI
+    b. Copy the Resource arn from the Summary page of your AWS Managed Prometheus(AMP) workspace and create this policy in AWS CLI
     
     ```json
     {
@@ -53,17 +54,17 @@ During this lab, we'll be implementing a robust observability solution for our c
     }
     ```
     
-    c. Replace *`my-service-account`* with the name of the Kubernetes service account that you want `eksctl` to create and associate with an IAM role. Replace *`default`* with the namespace that you want `eksctl` to create the service account in. Replace *`my-cluster`* with the name of your cluster. Replace *`my-role`* with the name of the role that you want to associate the service account to. If it doesn't already exist, `eksctl` creates it for you. Replace *`111122223333`* with your account ID and *`my-policy`* with the name of an existing policy.
+    c. Replace *`my-service-account`* with the name of the Kubernetes service account that you want `eksctl` to create and associate with an IAM role. Replace *`default`* with the namespace that you want `eksctl` to create the service account in. Replace *`my-cluster`* with the name of your cluster. Replace *`my-role`* with the name of the role that you want to associate the service account to. If it doesn't already exist, `eksctl` creates it for you. Replace *`111122223333`* with your account ID , *`my-policy`* with the name of an existing policy and replace *`my-region`* with the region of your EKS clsuter.
     
     ```html
-    eksctl create iamserviceaccount --name my-service-account --namespace default --cluster my-cluster --role-name "my-role" \
+    eksctl create iamserviceaccount --name my-service-account --namespace default --cluster my-cluster --region my-region --role-name "my-role" \
         --attach-policy-arn arn:aws:iam::111122223333:policy/my-policy --approve
     ```
     
-    d. Run this command to see if you setup your Service Account properly or not
+    d. Run this command to see if you setup your Service Account properly or not.Replace `<my-service-account>` with the name of your Service account and mention the namespace in which that service account was created in place of `<default>`
     
     ```html
-    kubectl describe serviceaccount *my-service-account* -n *default*
+    kubectl describe serviceaccount <my-service-account> -n <default>
     ```
     
 
@@ -80,7 +81,7 @@ During this lab, we'll be implementing a robust observability solution for our c
     - *`serviceAccount: adot-collector`*(replace this with the name of the service Account we created)
     - *`endpoint: "<YOUR_REMOTE_WRITE_ENDPOINT>"`*
     - *`region: "<YOUR_AWS_REGION>"`*
-    - *`name: adot-collector`* (replace with `amp-collector`)
+    - *`name: adot-collector`* 
 3. Apply the yaml file with this command
     
     ```html
@@ -159,7 +160,7 @@ kubectl get pods -A
     }
     ```
     
-2. Attach this policy to previously created AWS IAM role.This way the access to AWS X-Ray is given to the Service Account as well which is going to be used by the pods.
+2. Attach this policy to previously created AWS IAM role.This way the access to AWS X-Ray is given to the Service Account as well which is going to be used by the pods to export their traces.
 3. Lets setup a Sample Application and Traffic Generator in order to create some traces that will reflect in our X-Ray Console
   
     1. Lets deploy the traffic Generator first which will be creating traffic on the port 4567
@@ -179,7 +180,7 @@ kubectl get pods -A
         curl -O https://raw.githubusercontent.com/aws-observability/aws-otel-community/master/sample-configs/sample-app.yaml
         ```
         
-        b. Update the value for “*<YOUR_AWS_REGION>*” for the region in which your cluster is deployed
+        b. Update the value for “<YOUR_AWS_REGION>” for the region in which your cluster is deployed
         
         c. Replace the value for “OTEL_EXPORTER_OTLP_ENDPOINT” with “[http://my-collector-xray-collector:4317](http://my-collector-xray-collector:4317/)” or replace my-collector-xray with whatever the name of your xray-collector is going to be and 4317 is the port where the app with forward the traces to xray.
         
@@ -200,9 +201,9 @@ kubectl get pods -A
     ```
     
 2. In `collector-config-xray.yaml`, replace the following with your own values:
-    - `mode: *deployment*`
-    - `serviceAccount: *adot-collector` (provide the value of the Service Account we created)*
-    - `region: "*<YOUR_AWS_REGION>*"`
+    - *`mode: deployment`*
+    - *`serviceAccount: adot-collector`*(provide the value of the Service Account we created)
+    - *`region: "<YOUR_AWS_REGION>"`*
 3. Deploy the collector
     
     ```html
@@ -215,3 +216,12 @@ kubectl get pods -A
 ![image](https://user-images.githubusercontent.com/79714302/230540837-136a7d6a-905b-43eb-aebc-aefff32586f0.png)
 
 ![image](https://user-images.githubusercontent.com/79714302/230540870-ab4688da-cc1e-41b5-b312-377d636a54aa.png)
+
+## Cleanup
+   
+   Run the following command and replace cluster name and region with your own details to delete your EKS Cluster
+   
+   ```html
+   eksctl delete cluster --name <cluster-name> --region <region-name>
+   ```
+   
