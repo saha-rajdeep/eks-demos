@@ -1,23 +1,26 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "webserver-ingress"
-  namespace: "2048-game"
+  name: webserver-ingress
+  namespace: 2048-game
   annotations:
-    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
-  labels:
-    app: webserver-ingress
 spec:
+  ingressClassName: alb
   rules:
-    - http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: "service-frontend"
-              servicePort: 80
-          - path: /frontend
-            backend:
-              serviceName: "service-frontend"
-              servicePort: 80    
-                
+  - http:
+      paths:
+      - path: /*
+        pathType: Prefix
+        backend:
+          service:
+            name: service-frontend
+            port:
+              number: 80
+      - path: /frontend
+        pathType: Prefix
+        backend:
+          service:
+            name: service-frontend
+            port:
+              number: 80
